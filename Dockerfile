@@ -28,3 +28,4 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "students1.dll"]
+ENV ConnectionStrings__DefaultConnection="Host=dev-postgres;Port=5432;Database=dev;Username=user;Password=password"

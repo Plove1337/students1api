@@ -17,7 +17,7 @@ namespace students1.Controllers
             _context = context;
         }
 
-        // GET: api/Student
+        
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Student>>> GetAll()
         {
