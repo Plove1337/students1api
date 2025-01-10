@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using students1.Data;
 using students1.Models;
+using Npgsql;
+
 
 namespace students1.Controllers
 {
@@ -10,6 +12,7 @@ namespace students1.Controllers
     [ApiController]
     public class StudentController : ControllerBase
     {
+
         private readonly SchoolDbContext _context;
 
         public StudentController(SchoolDbContext context)

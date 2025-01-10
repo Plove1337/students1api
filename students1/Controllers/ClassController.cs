@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using students1.Data;
 using students1.Models;
+using Npgsql;
+
 
 namespace students1.Controllers
 {
