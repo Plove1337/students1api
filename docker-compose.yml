@@ -9,7 +9,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - /mnt/c/Users/plama/AppData/Roaming/Docker:/var/lib/postgresql/data
+      - /mnt/c/docker/postgres_data:/var/lib/postgresql/data
   webapp:
     build: .
     depends_on:
@@ -17,4 +17,4 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - /mnt/c/Users/plama/AppData/Roaming/Docker:/app
+      - /mnt/c/docker/webapp_data:/app
