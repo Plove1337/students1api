@@ -4,14 +4,19 @@ using students1.Models;
 namespace students1.Data
 {
     public class SchoolDbContext : DbContext
-    { 
+    {
+        public SchoolDbContext()
+        {
+        }
+
+        public SchoolDbContext(DbContextOptions<SchoolDbContext> options)
+            : base(options)
+        {
+        }
         public DbSet<Student> Students { get; set; }
         public DbSet<Class> Classes { get; set; }
+       public DbSet<Teacher> Teachers { get; set; }
 
-        public SchoolDbContext(DbContextOptions options) : base(options)
-        {
-
-        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Class>()

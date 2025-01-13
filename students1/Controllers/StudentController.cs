@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using students1.Data;
 using students1.Models;
 using Npgsql;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace students1.Controllers
@@ -22,6 +23,7 @@ namespace students1.Controllers
 
         
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Student>>> GetAll()
         {
             return await _context.Students.Include(s => s.Class).ToListAsync();
@@ -29,6 +31,7 @@ namespace students1.Controllers
 
         
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Student>> GetById(int id)
         {
             var student = await _context.Students.Include(s => s.Class).FirstOrDefaultAsync(s => s.Id == id);
@@ -41,6 +44,7 @@ namespace students1.Controllers
 
         
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Student>> Create(CreateStudent student)
         {
             if (student.Age <= 0)
@@ -65,6 +69,7 @@ namespace students1.Controllers
 
         
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> Update(int id, Student student)
         {
             if (id != student.Id)
@@ -85,6 +90,7 @@ namespace students1.Controllers
 
         
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> Delete(int id)
         {
             var student = await _context.Students.FindAsync(id);
