@@ -1,10 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.AspNetCore.Mvc;
 using students1.Data;
 using students1.Models;
-using System.Text;
 
 namespace students1.Controllers
 {
@@ -13,26 +9,28 @@ namespace students1.Controllers
     public class TeacherController : ControllerBase
     {
         SchoolDbContext _context = new SchoolDbContext();
-
-        public TeacherController(SchoolDbContext context)
+        private IConfiguration _config;
+        public TeacherController(IConfiguration config)
         {
-            _context = context;
+            _config = config;
         }
 
 
         [HttpPost("[action]")]
-        public IActionResult Register([FromBody]CreateTeacher teacher)
+        public IActionResult Register([FromBody] CreateTeacher teacher)
         {
             var teacherExists = _context.Teachers.FirstOrDefault(t => t.Email == teacher.Email);
             if (teacherExists != null)
             {
                 return BadRequest("Teacher already exists.");
             }
-            var t = new Teacher();
-            t.Name = teacher.Name;
-            t.Surname = teacher.Surname;
-            t.Email = teacher.Email;
-            t.Password = teacher.Password;
+            var t = new Teacher
+            {
+                Name = teacher.Name,
+                Surname = teacher.Surname,
+                Email = teacher.Email,
+                Password = teacher.Password
+            };
             _context.Teachers.Add(t);
             _context.SaveChanges();
             return StatusCode(StatusCodes.Status201Created);
@@ -45,7 +43,6 @@ namespace students1.Controllers
             {
                 return BadRequest("Invalid email or password.");
             }
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("zaq1@WSX"));
             return Ok(teacherExists);
         }
     }
