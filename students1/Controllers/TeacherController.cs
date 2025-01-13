@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using students1.Data;
 using students1.Models;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace students1.Controllers
 {
@@ -8,18 +12,20 @@ namespace students1.Controllers
     [ApiController]
     public class TeacherController : ControllerBase
     {
-        SchoolDbContext _context = new SchoolDbContext();
-        private IConfiguration _config;
-        public TeacherController(IConfiguration config)
+        private readonly SchoolDbContext _context;
+        private readonly IConfiguration _config;
+
+        public TeacherController(SchoolDbContext context, IConfiguration config)
         {
+            _context = context;
             _config = config;
         }
-
 
         [HttpPost("[action]")]
         public IActionResult Register([FromBody] CreateTeacher teacher)
         {
             var teacherExists = _context.Teachers.FirstOrDefault(t => t.Email == teacher.Email);
+
             if (teacherExists != null)
             {
                 return BadRequest("Teacher already exists.");
@@ -35,15 +41,34 @@ namespace students1.Controllers
             _context.SaveChanges();
             return StatusCode(StatusCodes.Status201Created);
         }
+
         [HttpPost("[action]")]
-        public IActionResult Login([FromBody] Teacher teacher)
+        public IActionResult Login([FromBody] LoginTeacher teacher)
         {
             var teacherExists = _context.Teachers.FirstOrDefault(t => t.Email == teacher.Email && t.Password == teacher.Password);
             if (teacherExists == null)
             {
                 return BadRequest("Invalid email or password.");
             }
-            return Ok(teacherExists);
+            var token = GenerateJwtToken();
+            return Ok(new { token });
+        }
+
+        private string GenerateJwtToken()
+        {
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("c82b9468811a068a0a036f1a8bdb9a159f8617ebc501b595b4e00b1faa7ef61e"));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: "https://localhost:5039",
+                audience: "https://localhost:5039",
+                claims: new List<Claim>(),
+                expires: DateTime.Now.AddMinutes(30),
+                signingCredentials: creds);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
-}   
+
+}
+   
