@@ -39,7 +39,7 @@ namespace students1.Controllers
 
         
         [HttpPost]
-        public async Task<ActionResult<Class>> Create([FromBody] Class classModel)
+        public async Task<ActionResult<Class>> Create(CreateClass classModel)
         {
             if (classModel == null)
             {
@@ -50,10 +50,16 @@ namespace students1.Controllers
             {
                 return BadRequest("Description is required.");
             }
+            var c = new Class();
+            c.Description = classModel.Description;
+            c.Name = classModel.Name;
+            c.Students = classModel.Students;
+            
 
-            _context.Classes.Add(classModel);
+
+            _context.Classes.Add(c);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetById), new { id = classModel.Id }, classModel);
+            return CreatedAtAction(nameof(GetById), new { id = c.Id }, classModel);
         }
 
         

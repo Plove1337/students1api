@@ -41,16 +41,26 @@ namespace students1.Controllers
 
         
         [HttpPost]
-        public async Task<ActionResult<Student>> Create(Student student)
+        public async Task<ActionResult<Student>> Create(CreateStudent student)
         {
             if (student.Age <= 0)
             {
                 return BadRequest("Age must be a positive number.");
             }
+            var calss = _context.Classes.Find(student.ClassID);
+            if (calss == null)
+            {
+                return BadRequest("Class not found.");
+            }
+            var s = new Student();
+            s.Name = student.Name;
+            s.Surname = student.Surname;
+            s.Age = student.Age;
+            s.ClassID = student.ClassID;
 
-            _context.Students.Add(student);
+            _context.Students.Add(s);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetById), new { id = student.Id }, student);
+            return CreatedAtAction(nameof(GetById), new { id = s.Id }, student);
         }
 
         

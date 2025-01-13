@@ -15,9 +15,9 @@ namespace students1.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Class>()
-                .HasMany(k => k.Students)
-                .WithOne(u => u.Class)
-                .HasForeignKey(u => u.ClassID);
+                .HasMany(c => c.Students)
+                .WithOne(s => s.Class)
+                .HasForeignKey(s => s.ClassID);
 
             base.OnModelCreating(modelBuilder);
         }
