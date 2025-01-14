@@ -4,7 +4,7 @@ using students1.Data;
 using students1.Models;
 namespace students1.Data
 {
-
+    
 
     public class SchoolDbContext : DbContext
     {

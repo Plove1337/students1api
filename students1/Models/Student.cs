@@ -1,4 +1,6 @@
-﻿namespace students1.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace students1.Models
 {
     public class Student
     {
@@ -7,6 +9,7 @@
         public string Surname { get; set; }
         public int Age { get; set; }
         public int ClassID { get; set; }
+        [NotMapped]
         public string Role { get; set; } = "Student";
         public Class Class { get; set; }
     }
