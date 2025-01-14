@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Query.ExpressionTranslators.Internal;
 using students1.Data;
 using students1.Models;
 using System.IdentityModel.Tokens.Jwt;
@@ -35,7 +36,7 @@ namespace students1.Controllers
                 Name = teacher.Name,
                 Surname = teacher.Surname,
                 Email = teacher.Email,
-                Password = teacher.Password
+                Password = teacher.Password,
             };
             _context.Teachers.Add(t);
             _context.SaveChanges();
@@ -57,16 +58,18 @@ namespace students1.Controllers
         private string GenerateJwtToken()
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("c82b9468811a068a0a036f1a8bdb9a159f8617ebc501b595b4e00b1faa7ef61e"));
+            var expires = DateTime.Now.AddMinutes(30);
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
+     
             var token = new JwtSecurityToken(
                 issuer: "https://localhost:5039",
                 audience: "https://localhost:5039",
                 claims: new List<Claim>(),
-                expires: DateTime.Now.AddMinutes(30),
+                expires: expires,
                 signingCredentials: creds);
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            var tokenHandler = new JwtSecurityTokenHandler();
+            return tokenHandler.WriteToken(token);
         }
     }
 

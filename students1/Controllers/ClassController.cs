@@ -21,7 +21,7 @@ namespace students1.Controllers
 
         
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = "Teacher")]
         public async Task<ActionResult<IEnumerable<Class>>> GetAll()
         {
             return await _context.Classes.Include(c => c.Students).ToListAsync();
@@ -29,7 +29,7 @@ namespace students1.Controllers
 
         
         [HttpGet("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Teacher")]
         public async Task<ActionResult<Class>> GetById(int id)
         {
             var classModel = await _context.Classes.Include(c => c.Students).FirstOrDefaultAsync(c => c.Id == id);
@@ -42,7 +42,7 @@ namespace students1.Controllers
 
         
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "Teacher")]
         public async Task<ActionResult<Class>> Create(CreateClass classModel)
         {
             if (classModel == null)
@@ -68,7 +68,7 @@ namespace students1.Controllers
 
         
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Update(int id, [FromBody] Class classModel)
         {
             if (id != classModel.Id)
@@ -93,7 +93,7 @@ namespace students1.Controllers
 
         
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Delete(int id)
         {
             var classModel = await _context.Classes.FindAsync(id);

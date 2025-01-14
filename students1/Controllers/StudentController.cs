@@ -21,17 +21,17 @@ namespace students1.Controllers
             _context = context;
         }
 
-        
+
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = "Teacher")]
         public async Task<ActionResult<IEnumerable<Student>>> GetAll()
         {
             return await _context.Students.Include(s => s.Class).ToListAsync();
         }
 
-        
+
         [HttpGet("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Teacher")]
         public async Task<ActionResult<Student>> GetById(int id)
         {
             var student = await _context.Students.Include(s => s.Class).FirstOrDefaultAsync(s => s.Id == id);
@@ -42,9 +42,9 @@ namespace students1.Controllers
             return student;
         }
 
-        
+
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "Teacher")]
         public async Task<ActionResult<Student>> Create(CreateStudent student)
         {
             if (student.Age <= 0)
@@ -67,9 +67,9 @@ namespace students1.Controllers
             return CreatedAtAction(nameof(GetById), new { id = s.Id }, student);
         }
 
-        
+
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(Roles ="Teacher")]
         public async Task<IActionResult> Update(int id, Student student)
         {
             if (id != student.Id)
@@ -88,9 +88,9 @@ namespace students1.Controllers
             return NoContent();
         }
 
-        
+
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Delete(int id)
         {
             var student = await _context.Students.FindAsync(id);
@@ -102,6 +102,6 @@ namespace students1.Controllers
             _context.Students.Remove(student);
             await _context.SaveChangesAsync();
             return NoContent();
-        }
+        } 
     }
 }
