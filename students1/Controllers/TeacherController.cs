@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualBasic;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Query.ExpressionTranslators.Internal;
@@ -38,6 +39,7 @@ namespace students1.Controllers
                 Surname = teacher.Surname,
                 Email = teacher.Email,
                 Password = teacher.Password,
+                Role = "Teacher"
             };
             _context.Teachers.Add(t);
             _context.SaveChanges();
@@ -45,13 +47,14 @@ namespace students1.Controllers
         }
 
         [HttpPost("[action]")]
-        public IActionResult Login([FromBody] LoginTeacher teacher)
+        public IActionResult Login([FromBody] LoginTeacher teacher,[FromQuery] IdentityRole role)
         {
             var teacherExists = _context.Teachers.FirstOrDefault(t => t.Email == teacher.Email && t.Password == teacher.Password);
             if (teacherExists == null)
             {
                 return BadRequest("Invalid email or password.");
             }
+            role = new IdentityRole { Name = "Teacher" };
             var token = GenerateJwtToken();
             return Ok(new { token });
         }
