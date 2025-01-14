@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using students1.Data;
 using students1.Models;
-
 namespace students1.Data
 {
+
+
     public class SchoolDbContext : DbContext
     {
         public SchoolDbContext()
@@ -26,5 +28,7 @@ namespace students1.Data
 
             base.OnModelCreating(modelBuilder);
         }
+
+
     }
 }
