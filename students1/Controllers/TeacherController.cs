@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualBasic;
@@ -23,8 +24,9 @@ namespace students1.Controllers
             _context = context;
             _config = config;
         }
-
+        [Authorize(Roles = "Teacher, Admin")]
         [HttpPost("[action]")]
+        
         public IActionResult Register([FromBody] CreateTeacher teacher)
         {
             var teacherExists = _context.Teachers.FirstOrDefault(t => t.Email == teacher.Email);
@@ -45,7 +47,7 @@ namespace students1.Controllers
             _context.SaveChanges();
             return StatusCode(StatusCodes.Status201Created);
         }
-
+        [Authorize(Roles = "Teacher, Admin")]
         [HttpPost("[action]")]
         public IActionResult Login([FromBody] LoginTeacher teacher,[FromQuery] IdentityRole role)
         {
