@@ -21,13 +21,13 @@ namespace students1.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin,Director")]
+        [Authorize]             //(Roles = "Admin,Director")
         public async Task<ActionResult<IEnumerable<Student>>> GetAll()
         {
             return await _context.Students.Include(s => s.Class).ToListAsync();
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}/all")]
         [Authorize(Roles = "Teacher,Admin,Director")]
         public async Task<ActionResult<Student>> GetById(int id)
         {
@@ -37,6 +37,24 @@ namespace students1.Controllers
                 return NotFound();
             }
             return student;
+        }
+        [HttpGet("{id}")]
+        [Authorize(Roles = "Student")]
+        public async Task<ActionResult<Student>> GetByOwnId(int id)
+        {
+            var student = await _context.Students.Include(s => s.Class).FirstOrDefaultAsync(s => s.Id == id);
+            if (student == null)
+            {
+                return NotFound();
+            }
+            if (student.Id == id)
+            {
+                return Ok(student);
+            }
+            else
+            {
+                return Forbid();
+            }
         }
 
         [HttpGet("class/{classId}")]
@@ -90,7 +108,6 @@ namespace students1.Controllers
             {
                 return NotFound("Student not found.");
             }
-
             _context.Entry(student).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 

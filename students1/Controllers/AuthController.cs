@@ -17,18 +17,17 @@ namespace students1.Controllers
             _jwtAuthManager = jwtAuthManager;
         }
 
-        [HttpPost("login")]
+        [HttpPost("login-student")]
         public IActionResult Login([FromBody] LoginRequest request)
         {
-            var role = "Student";
 
             var claims = new[]
             {
                 new Claim(ClaimTypes.Name, request.Email),
-                new Claim(ClaimTypes.Role, role)
+                new Claim(ClaimTypes.Role, "Student")
             };
 
-            var tokens = _jwtAuthManager.GenerateTokens(request.Email, claims, DateTime.UtcNow, role);
+            var tokens = _jwtAuthManager.GenerateTokens(request.Email, claims, DateTime.UtcNow, "Student");
 
             return Ok(tokens);
         }
