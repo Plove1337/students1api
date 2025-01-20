@@ -46,5 +46,31 @@ namespace students1.Controllers
 
             return Ok(tokens);
         }
+        [HttpPost("login-headteacher")]
+        public IActionResult LoginHeadteacher([FromBody] LoginAdmin request)
+        {
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Name, request.Email),
+                new Claim(ClaimTypes.Role, "Director")
+            };
+
+            var tokens = _jwtAuthManager.GenerateTokens(request.Email, claims, DateTime.UtcNow, "Director");
+
+            return Ok(tokens);
+        }
+        [HttpPost("login-teacher")]
+        public IActionResult LoginTeacher([FromBody] LoginAdmin request)
+        {
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Name, request.Email),
+                new Claim(ClaimTypes.Role, "Teacher")
+            };
+
+            var tokens = _jwtAuthManager.GenerateTokens(request.Email, claims, DateTime.UtcNow, "Admin");
+
+            return Ok(tokens);
+        }
     }
 }

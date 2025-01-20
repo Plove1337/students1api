@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.VisualBasic;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Query.ExpressionTranslators.Internal;
 using students1.Data;
 using students1.Models;
 using System.IdentityModel.Tokens.Jwt;
@@ -14,60 +11,53 @@ namespace students1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TeacherController : ControllerBase
+    public class HeadteacherController : ControllerBase
     {
         private readonly SchoolDbContext _context;
-        private readonly IConfiguration _config;
 
-        public TeacherController(SchoolDbContext context, IConfiguration config)
+        public HeadteacherController(SchoolDbContext context)
         {
             _context = context;
-            _config = config;
         }
 
-       // [Authorize(Roles = "Teacher, Admin")]
-        [HttpPost("[action]")]
-        
-        public IActionResult Register([FromBody] CreateTeacher teacher)
-        {
-            var teacherExists = _context.Teachers.FirstOrDefault(t => t.Email == teacher.Email);
 
-            if (teacherExists != null)
+        [HttpPost("[action]")]
+        public IActionResult Register([FromBody] CreateHeadteacher headteacher)
+        {
+            var headteacherExists = _context.Headteachers.FirstOrDefault(h => h.Email == headteacher.Email);
+            if (headteacherExists != null)
             {
-                return BadRequest("Teacher already exists.");
+                return BadRequest("Headteacher already exists.");
             }
-            var t = new Teacher
+            var h = new Headteacher
             {
-                Name = teacher.Name,
-                Surname = teacher.Surname,
-                Email = teacher.Email,
-                Password = teacher.Password,
-                Role = "Teacher"
+                Name = headteacher.Name,
+                Surname = headteacher.Surname,
+                Email = headteacher.Email,
+                Password = headteacher.Password,
+                Role = "Headteacher"
             };
-            _context.Teachers.Add(t);
+            _context.Headteachers.Add(h);
             _context.SaveChanges();
             return StatusCode(StatusCodes.Status201Created);
         }
-        // [Authorize(Roles = "Teacher, Admin")]
-        [HttpPost("[action]")]
-        public IActionResult Login([FromBody] LoginTeacher teacher,[FromQuery] IdentityRole role)
+        [HttpPost]
+        public IActionResult Login([FromBody] LoginHeadteacher headteacher)
         {
-            var teacherExists = _context.Teachers.FirstOrDefault(t => t.Email == teacher.Email && t.Password == teacher.Password);
-            if (teacherExists == null)
+            var headteacherExists = _context.Headteachers.FirstOrDefault(h => h.Email == headteacher.Email && h.Password == headteacher.Password);
+            if (headteacherExists == null)
             {
                 return BadRequest("Invalid email or password.");
             }
-            role = new IdentityRole { Name = "Teacher" };
             var token = GenerateJwtToken();
             return Ok(new { token });
         }
-
         private string GenerateJwtToken()
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("JwtOptions:SigningKey"));
             var expires = DateTime.Now.AddMinutes(30);
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-     
+
             var token = new JwtSecurityToken(
                 issuer: "https://localhost:5039",
                 audience: "https://localhost:5039",
@@ -79,6 +69,4 @@ namespace students1.Controllers
             return tokenHandler.WriteToken(token);
         }
     }
-
 }
-   

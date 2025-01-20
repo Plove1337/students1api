@@ -14,6 +14,12 @@ public class JwtAuthManager : IJwtAuthManager
 {
     private readonly string _secret;
     private readonly string _adminSecret;
+    private string v;
+
+    public JwtAuthManager(string v)
+    {
+        this.v = v;
+    }
 
     public JwtAuthManager(string secret, string adminSecret)
     {
@@ -23,12 +29,13 @@ public class JwtAuthManager : IJwtAuthManager
 
     public Tokens GenerateTokens(string username, Claim[] claims, DateTime now, string role)
     {
+
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(role == "Admin" ? _adminSecret : _secret));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: "yourdomain.com",
-            audience: "yourdomain.com",
+            issuer: "https://localhost:5039",
+            audience: "https://localhost:5039",
             claims: claims,
             expires: now.AddMinutes(30),
             signingCredentials: creds);
@@ -45,7 +52,7 @@ public class JwtAuthManager : IJwtAuthManager
     public ClaimsPrincipal ValidateJwtToken(string token)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_secret);
+        var key = Encoding.UTF8.GetBytes(_secret);
         try
         {
             var principal = tokenHandler.ValidateToken(token, new TokenValidationParameters

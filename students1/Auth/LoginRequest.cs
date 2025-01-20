@@ -5,7 +5,8 @@
         public string Username { get; set; }
         public string Password { get; set; }
         public string Role { get; set; }
-    }
+        public string TwoFactorCode { get; set; }
+}
 
     public class Tokens
     {

@@ -13,17 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
-{
-    options.SaveToken = true;
-    options.RequireHttpsMetadata = false;
-});
-
-var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Secret"]);
+var key = Encoding.UTF8.GetBytes(builder.Configuration["JwtOptions:SigningKey"]);
 
 builder.Services.AddAuthentication(x =>
 {
@@ -43,7 +33,7 @@ builder.Services.AddAuthentication(x =>
     };
 });
 
-builder.Services.AddSingleton<IJwtAuthManager>(new JwtAuthManager(builder.Configuration["Jwt:Secret"]));
+builder.Services.AddSingleton<IJwtAuthManager>(new JwtAuthManager(builder.Configuration["JwtOptions:SigningKey"]));
 
 builder.Services.AddDbContext<SchoolDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -59,9 +49,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// builder.Services.AddAuthentication("BasicAuthentication")
-// .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
-
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
@@ -72,7 +59,7 @@ using (var scope = app.Services.CreateScope())
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
+    app.UseSwagger();      
     app.UseSwaggerUI();
 }
 
