@@ -1,19 +1,18 @@
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Writers;
 using students1.Auth;
 using students1.Data;
+using students1.Models;
 using System.Text;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
-var key = Encoding.UTF8.GetBytes(builder.Configuration["JwtOptions:SigningKey"]);
+var jwtOptions = builder.Configuration.GetSection("JwtOptions").Get<JwtOptions>();
+
+var key = Encoding.UTF8.GetBytes(jwtOptions.SigningKey);
 
 builder.Services.AddAuthentication(x =>
 {
@@ -33,7 +32,8 @@ builder.Services.AddAuthentication(x =>
     };
 });
 
-builder.Services.AddSingleton<IJwtAuthManager>(new JwtAuthManager(builder.Configuration["JwtOptions:SigningKey"]));
+
+builder.Services.AddSingleton<IJwtAuthManager>(new JwtAuthManager(jwtOptions.Secret, jwtOptions.AdminSecret));
 
 builder.Services.AddDbContext<SchoolDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -59,7 +59,7 @@ using (var scope = app.Services.CreateScope())
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();      
+    app.UseSwagger();
     app.UseSwaggerUI();
 }
 
