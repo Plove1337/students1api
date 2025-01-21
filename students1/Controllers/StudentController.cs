@@ -5,6 +5,7 @@ using students1.Data;
 using students1.Models;
 using Npgsql;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 
 namespace students1.Controllers
@@ -13,6 +14,7 @@ namespace students1.Controllers
     [ApiController]
     public class StudentController : ControllerBase
     {
+        private readonly IJwtAuthManager _jwtAuthManager;
         private readonly SchoolDbContext _context;
 
         public StudentController(SchoolDbContext context)
@@ -28,7 +30,7 @@ namespace students1.Controllers
         }
 
         [HttpGet("{id}/all")]
-        [Authorize(Roles = "Teacher,Admin,Director")]
+        // [Authorize(Roles = "Teacher,Admin,Director")]
         public async Task<ActionResult<Student>> GetById(int id)
         {
             var student = await _context.Students.Include(s => s.Class).FirstOrDefaultAsync(s => s.Id == id);
@@ -39,7 +41,7 @@ namespace students1.Controllers
             return student;
         }
         [HttpGet("{id}")]
-        [Authorize(Roles = "Student")]
+        // [Authorize(Roles = "Student")]
         public async Task<ActionResult<Student>> GetByOwnId(int id)
         {
             var student = await _context.Students.Include(s => s.Class).FirstOrDefaultAsync(s => s.Id == id);
@@ -58,7 +60,7 @@ namespace students1.Controllers
         }
 
         [HttpGet("class/{classId}")]
-        [Authorize(Roles = "Teacher")]
+        // [Authorize(Roles = "Teacher")]
         public async Task<ActionResult<IEnumerable<Student>>> GetByClassId(int classId)
         {
             var teacherEmail = User.Identity.Name;
@@ -72,7 +74,7 @@ namespace students1.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin,Director")]
+       // [Authorize(Roles = "Admin,Director")]
         public async Task<ActionResult<Student>> Create(CreateStudent student)
         {
             if (student.Age <= 0)
@@ -90,13 +92,14 @@ namespace students1.Controllers
             s.Age = student.Age;
             s.ClassID = student.ClassID;
 
+
             _context.Students.Add(s);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetById), new { id = s.Id }, student);
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin,Director")]
+        // [Authorize(Roles = "Admin,Director")]
         public async Task<IActionResult> Update(int id, Student student)
         {
             if (id != student.Id)
@@ -115,7 +118,7 @@ namespace students1.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin,Director")]
+       // [Authorize(Roles = "Admin,Director")]
         public async Task<IActionResult> Delete(int id)
         {
             var student = await _context.Students.FindAsync(id);

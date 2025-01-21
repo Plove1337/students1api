@@ -6,7 +6,9 @@ using System.Text;
 
 public interface IJwtAuthManager
 {
-    Tokens GenerateTokens(string username, Claim[] claims, DateTime now, string role);
+    //sprawdza string password, int id, dodaj do tokens po claimsach dodawaj
+    // po sprawdzeniu czy istnieje dodaj mu role
+    Tokens GenerateTokens(string username,  Claim[] claims, DateTime now, string role);
     ClaimsPrincipal ValidateJwtToken(string token);
 }
 

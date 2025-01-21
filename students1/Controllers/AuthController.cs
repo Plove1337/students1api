@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Docker.DotNet.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using students1.Models;
@@ -10,7 +11,10 @@ namespace students1.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
+        
         private readonly IJwtAuthManager _jwtAuthManager;
+
+        
 
         public AuthController(IJwtAuthManager jwtAuthManager)
         {
@@ -20,7 +24,6 @@ namespace students1.Controllers
         [HttpPost("login-student")]
         public IActionResult Login([FromBody] LoginRequest request)
         {
-
             var claims = new[]
             {
                 new Claim(ClaimTypes.Name, request.Email),
@@ -70,6 +73,8 @@ namespace students1.Controllers
             var tokens = _jwtAuthManager.GenerateTokens(request.Email, claims, DateTime.UtcNow, "Admin");
 
             return Ok(tokens);
+       
+        
         }
     }
 }

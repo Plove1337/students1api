@@ -29,13 +29,12 @@ namespace students1.Controllers
             {
                 return BadRequest("Headteacher already exists.");
             }
-            var h = new Headteacher
-            {
+            var h = new Headteacher {
                 Name = headteacher.Name,
                 Surname = headteacher.Surname,
                 Email = headteacher.Email,
                 Password = headteacher.Password,
-                Role = "Headteacher"
+                Role = "Director"
             };
             _context.Headteachers.Add(h);
             _context.SaveChanges();

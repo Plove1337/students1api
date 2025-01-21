@@ -13,7 +13,7 @@ namespace students1.Models
         public string Role { get; set; } = "Director";
     }
     public class CreateHeadteacher
-    {
+    { 
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Email { get; set; }
